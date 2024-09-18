@@ -1,0 +1,44 @@
+server:
+  AppVersion: 1.0.0
+  Port: :5000
+  Domain: localhost
+  ServerName: api_v1
+  PrefixPath: /api/v1
+  Registration: true
+  SessionLifeTimeMin: 10
+
+ssl:
+  Active: true
+  CrtPath: certs/localhost.crt
+  KeyPath: certs/localhost.key
+
+database:
+  Driver: psql
+  # Driver: mysql
+  CleanStart: false
+  CreateAdmin: true
+
+postgres:
+  PostgresqlHost: localhost
+  PostgresqlPort: 5432
+  PostgresqlUser: postgres
+  PostgresqlPass: postgres
+  PostgresqlDB: courses_db
+
+mysql:
+  MysqlHost: localhost
+  MysqlPort: 3306
+  MysqlUser: mysql
+  MysqlPass: mysql
+  MysqlDB: api_chat_db
+
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: json
+  Level: warn
+
+admin:
+  username: admin
+  password: admin

@@ -1,0 +1,978 @@
+{
+	"info": {
+		"_postman_id": "d22346fd-ed74-4063-9072-f3344f4082b6",
+		"name": "api_chat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19074459"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register blogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\":\"fname\",\r\n    \"last_name\":\"lname\",\r\n    \"login\":\"blogin\",\r\n    \"password\":\"bpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/register",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register xlogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\":\"xfname\",\r\n    \"last_name\":\"xlname\",\r\n    \"login\":\"xlogin\",\r\n    \"password\":\"xpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/register",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/login",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login blogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"blogin\",\r\n    \"password\":\"bpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/login",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login dlogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"dlogin\",\r\n    \"password\":\"dpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/login",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login xlogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"xlogin\",\r\n    \"password\":\"xpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/login",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "4367b20e68adcc1b017e3948d5f1e4a8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/refresh",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "get all users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "ae3b5025957aec02cbfa191960756591",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/admin/users/show?offset=0&limit=10",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"users",
+								"show"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all chats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "81706ad804e5b775cad82970a5e3a70f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/admin/chats/show?offset=0&limit=10",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"chats",
+								"show"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set role for user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "acf89c609716d518d49e29213e7bfa20",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/admin/blogin/role?do=middle",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"blogin",
+								"role"
+							],
+							"query": [
+								{
+									"key": "do",
+									"value": "middle"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create chat (admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "81706ad804e5b775cad82970a5e3a70f",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"desc\":\"admin_chat\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/admin/create/chat",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"create",
+								"chat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create user (admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "0c2b488673d11cdfa07f82f5e94f0f68",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"dlogin\",\r\n    \"password\":\"dpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/admin/create/user",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"create",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get user info (self)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "6d21abf732981a00aec9b33d74fe8c40",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/user/self",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"self"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modify user info (self)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "4797698b8ee9c41fc2bf69450d52fdb3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"fname2\",\r\n    \"last_name\": \"lname2\",\r\n    \"login\": \"blogin\",\r\n    \"password\": \"bpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/user/self",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"self"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete user (self)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "c927eebebc68fada8706afad803f34a1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"blogin\",\r\n    \"password\":\"bpass\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/user/self",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"self"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chat",
+			"item": [
+				{
+					"name": "get info chats (self follow)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "b7687c86d7408b529f0fa684e34779b2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/self?offset=0&limit=10",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"self"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get info chat",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "8207b841fc3889d5eb78e03147d34838",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "0c610a51bfede360e1b62d968ec3b2f6",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat2",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "edd52b00f9ef3abfc01e076145e62670",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "follow chat",
+			"item": [
+				{
+					"name": "get followers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "28643bd6fbdfbe24a239147d8fdc88fd",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat/followers?offset=0&limit=10",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat",
+								"followers"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat follow",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "8207b841fc3889d5eb78e03147d34838",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat2/follow",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat2",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat unfollow",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "b7687c86d7408b529f0fa684e34779b2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/chat/bchat/unfollow",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"bchat",
+								"unfollow"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "message",
+			"item": [
+				{
+					"name": "get msg from chat",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "c1cef4a6f5e55c13a374038bde65b8e2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/msg/bchat?offset=0&limit=10",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"msg",
+								"bchat"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "push msg to chat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "8aaea417af001f9700ae001c929fe6ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"chat\":\"bchat2\",\r\n    \"text\":\"то что ты пидор епта\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/msg",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"msg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "del msg from chat",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Allow-Session",
+								"value": "ae3b5025957aec02cbfa191960756591",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"chat\":\"bchat\",\r\n    \"msg_id\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://127.0.0.1:5000/api/v1/msg",
+							"protocol": "https",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"msg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/api/v1/test",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"test"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
