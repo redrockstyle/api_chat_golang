@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	TargetSelf  = "self"
-	AuthSession = "X-Allow-Session"
+	TargetSelf       = "self"
+	strHeaderSession = "X-Allow-Session"
 
-	strContentType     = "Content-Type"
-	strApplicationJSON = "application/json"
+	//strContentType     = "Content-Type"
+	strApplicationJSON = "application/json; charset=UTF-8"
 )
 
 type ReMessage struct {
@@ -43,7 +43,6 @@ func (has *HttpApiHandler) HandlerTest(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerLogin(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	ctx.Response.Header.Set(strContentType, strApplicationJSON)
 	if string(ctx.Method()) == fasthttp.MethodPost {
 		user := db.User{}
 		if err := json.Unmarshal(ctx.Request.Body(), &user); err != nil {
@@ -52,9 +51,9 @@ func (has *HttpApiHandler) HandlerLogin(ctx *fasthttp.RequestCtx) {
 			session, err := has.uc.Login(&user)
 			if err != nil {
 				has.logx.Warnf("Login user:%v err:%v", user.Login, err)
-				ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+				ctx.SetStatusCode(fasthttp.StatusBadRequest)
 			} else {
-				ctx.Response.Header.Set(AuthSession, session)
+				ctx.Response.Header.Set(strHeaderSession, session)
 				ctx.SetStatusCode(fasthttp.StatusOK)
 			}
 		}
@@ -65,18 +64,18 @@ func (has *HttpApiHandler) HandlerLogin(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HanlderRegister(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	ctx.Response.Header.Set(strContentType, strApplicationJSON)
 	if has.cfg.Server.Registration {
 		if string(ctx.Method()) == fasthttp.MethodPost {
 			user := db.User{}
 			if err := json.Unmarshal(ctx.Request.Body(), &user); err != nil {
-				ctx.Error("", fasthttp.StatusUnauthorized)
+				ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			} else {
 				if err := has.uc.Register(&user); err != nil {
 					has.logx.Warnf("Register user:%v err:%v", user.Login, err)
-					ctx.Error("", fasthttp.StatusInternalServerError)
+					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					ctx.SetStatusCode(fasthttp.StatusOK)
+					SetLocationHeader(ctx, has.cfg.Server.PrefixPath+"/user/"+user.Login)
+					ctx.SetStatusCode(fasthttp.StatusCreated)
 				}
 			}
 		} else {
@@ -89,9 +88,8 @@ func (has *HttpApiHandler) HanlderRegister(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HanlderRefresh(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	ctx.Response.Header.Set(strContentType, strApplicationJSON)
 	if string(ctx.Method()) == fasthttp.MethodPost {
-		session := ctx.Request.Header.Peek(AuthSession)
+		session := ctx.Request.Header.Peek(strHeaderSession)
 		if len(session) == 0 {
 			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 		} else {
@@ -100,7 +98,7 @@ func (has *HttpApiHandler) HanlderRefresh(ctx *fasthttp.RequestCtx) {
 				has.logx.Warnf("Refresh: %v", err)
 				ctx.SetStatusCode(fasthttp.StatusForbidden)
 			} else {
-				ctx.Response.Header.Set(AuthSession, newSession)
+				ctx.Response.Header.Set(strHeaderSession, newSession)
 			}
 		}
 	} else {
@@ -110,7 +108,7 @@ func (has *HttpApiHandler) HanlderRefresh(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	target := ctx.UserValue("login").(string)
 	if len(session) == 0 {
 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
@@ -142,7 +140,7 @@ func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 					}
 				}
 			}
-		case fasthttp.MethodPost:
+		case fasthttp.MethodPatch:
 			{
 				switch target {
 				case TargetSelf:
@@ -158,7 +156,7 @@ func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 						}
 					}
 				default:
-					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
 		case fasthttp.MethodDelete:
@@ -173,11 +171,11 @@ func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Delete user is failed: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
-							ctx.SetStatusCode(fasthttp.StatusOK)
+							ctx.SetStatusCode(fasthttp.StatusNoContent)
 						}
 					}
 				default:
-					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
 		default:
@@ -188,7 +186,7 @@ func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	target := ctx.UserValue("desc").(string)
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
 	limitStr := string(ctx.QueryArgs().Peek("limit"))
@@ -230,7 +228,8 @@ func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 					has.logx.Warnf("Create chat: %v", err)
 					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					ctx.SetStatusCode(fasthttp.StatusOK)
+					SetLocationHeader(ctx, has.cfg.Server.PrefixPath+"/chat/"+target)
+					ctx.SetStatusCode(fasthttp.StatusCreated)
 				}
 			}
 		case fasthttp.MethodDelete:
@@ -239,7 +238,7 @@ func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 					has.logx.Warnf("Delete chat: %v", err)
 					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					ctx.SetStatusCode(fasthttp.StatusOK)
+					ctx.SetStatusCode(fasthttp.StatusNoContent)
 				}
 			}
 		default:
@@ -250,7 +249,7 @@ func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerFollow(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	target := ctx.UserValue("desc").(string)
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
 	limitStr := string(ctx.QueryArgs().Peek("limit"))
@@ -285,7 +284,7 @@ func (has *HttpApiHandler) HandlerFollow(ctx *fasthttp.RequestCtx) {
 				if err := has.uc.DelUserFromChat(session, target); err != nil {
 					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					ctx.SetStatusCode(fasthttp.StatusOK)
+					ctx.SetStatusCode(fasthttp.StatusNoContent)
 				}
 			}
 		default:
@@ -298,7 +297,7 @@ func (has *HttpApiHandler) HandlerFollow(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	if len(session) == 0 {
 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 	} else {
@@ -343,7 +342,7 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 						has.logx.Warnf("Delete message: %v", err)
 						ctx.SetStatusCode(fasthttp.StatusBadRequest)
 					} else {
-						ctx.SetStatusCode(fasthttp.StatusOK)
+						ctx.SetStatusCode(fasthttp.StatusNoContent)
 					}
 				}
 			}
@@ -357,7 +356,7 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	target := ctx.UserValue("entity").(string)
 	role := string(ctx.QueryArgs().Peek("do"))
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
@@ -395,10 +394,10 @@ func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 						}
 					}
 				default:
-					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
-		case fasthttp.MethodPost:
+		case fasthttp.MethodPatch:
 			{
 				if err := has.uc.Role().SetRoleUser(session, target, role); err != nil {
 					has.logx.Warnf("Set role: %v", err)
@@ -413,7 +412,7 @@ func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerAdminCreate(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	session := string(ctx.Request.Header.Peek(AuthSession))
+	session := string(ctx.Request.Header.Peek(strHeaderSession))
 	target := ctx.UserValue("entity").(string)
 	if len(session) == 0 {
 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
@@ -452,7 +451,7 @@ func (has *HttpApiHandler) HandlerAdminCreate(ctx *fasthttp.RequestCtx) {
 						}
 					}
 				default:
-					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
 		default:
@@ -466,8 +465,19 @@ func SetServerNameHeader(ctx *fasthttp.RequestCtx, servername string) {
 }
 
 func SetBodyJson(ctx *fasthttp.RequestCtx, some interface{}) {
-	ctx.Response.Header.Set(strContentType, strApplicationJSON)
+	SetChacheControlDisable(ctx)
+	ctx.Response.Header.Set(fasthttp.HeaderContentType, strApplicationJSON)
 	bodyResp, _ := json.Marshal(some)
 	ctx.SetBody(bodyResp)
 	ctx.SetStatusCode(fasthttp.StatusOK)
+}
+
+func SetChacheControlDisable(ctx *fasthttp.RequestCtx) {
+	ctx.Response.Header.Set(fasthttp.HeaderCacheControl, "no-cache, no-store, must-revalidate")
+	ctx.Response.Header.Set(fasthttp.HeaderPragma, "no-cache")
+	ctx.Response.Header.Set(fasthttp.HeaderExpires, "0")
+}
+
+func SetLocationHeader(ctx *fasthttp.RequestCtx, url string) {
+	ctx.Request.Header.Set(fasthttp.HeaderLocation, url)
 }

@@ -258,7 +258,7 @@
 						"header": [
 							{
 								"key": "X-Allow-Session",
-								"value": "ae3b5025957aec02cbfa191960756591",
+								"value": "545f9c260621761057036114d95effff",
 								"type": "text"
 							}
 						],
@@ -300,7 +300,7 @@
 						"header": [
 							{
 								"key": "X-Allow-Session",
-								"value": "81706ad804e5b775cad82970a5e3a70f",
+								"value": "34fa7bfb268b5bd90cb06dc48c689c52",
 								"type": "text"
 							}
 						],
@@ -338,7 +338,7 @@
 				{
 					"name": "set role for user",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Allow-Session",
@@ -494,7 +494,7 @@
 				{
 					"name": "modify user info (self)",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Allow-Session",
@@ -883,7 +883,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"chat\":\"bchat2\",\r\n    \"text\":\"то что ты пидор епта\"\r\n}",
+							"raw": "{\r\n    \"chat\":\"bchat2\",\r\n    \"text\":\"test message\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -969,6 +969,31 @@
 						"api",
 						"v1",
 						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get allow mothods (/:entity/:desc)",
+			"request": {
+				"method": "OPTIONS",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/api/v1/chat/bchat",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"chat",
+						"bchat"
 					]
 				}
 			},
