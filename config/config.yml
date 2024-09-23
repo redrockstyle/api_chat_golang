@@ -2,6 +2,7 @@ server:
   AppVersion: 1.0.0
   Port: :5000
   Domain: localhost
+  Mode: Development
   ServerName: api_v1
   PrefixPath: /api/v1
   Registration: true
@@ -19,14 +20,14 @@ database:
   CreateAdmin: true
 
 postgres:
-  PostgresqlHost: localhost
+  PostgresqlHost: postgres
   PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPass: postgres
-  PostgresqlDB: courses_db
+  PostgresqlDB: api_chat_db
 
 mysql:
-  MysqlHost: localhost
+  MysqlHost: mysql
   MysqlPort: 3306
   MysqlUser: mysql
   MysqlPass: mysql
@@ -37,7 +38,7 @@ logger:
   DisableCaller: false
   DisableStacktrace: false
   Encoding: json
-  Level: warn
+  Level: info
 
 admin:
   username: admin

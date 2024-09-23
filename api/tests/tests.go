@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const config_path = "config/config.dev"
+const config_path = "../../config/config.dev"
 
 type TestKeys struct {
 	dbGorm *gorm.DB

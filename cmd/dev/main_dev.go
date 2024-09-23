@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-	//init := api.NewInitializerAPI("./config/config")
 	init := api.NewInitializerAPI("./config/config.dev")
 	init.InitConfig()
 	init.Startup()

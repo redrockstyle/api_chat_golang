@@ -62,7 +62,7 @@ func (i *Initializer) Startup() {
 	case config.DriverPostgres:
 		db, err = psql_init.OpenPsqlDatabase(i.cfg)
 		if err != nil {
-			i.log.Fatal("Open database is failed: %v", err)
+			i.log.Fatalf("Open database is failed: %v", err)
 		} else {
 			i.log.Info("Success init psql database")
 		}
