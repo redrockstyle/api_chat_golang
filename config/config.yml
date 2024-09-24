@@ -1,8 +1,6 @@
 server:
   AppVersion: 1.0.0
   Port: :5000
-  Domain: localhost
-  Mode: Development
   ServerName: api_v1
   PrefixPath: /api/v1
   Registration: true
@@ -10,6 +8,7 @@ server:
 
 ssl:
   Active: true
+  # Domain: localhost
   CrtPath: certs/localhost.crt
   KeyPath: certs/localhost.key
 
@@ -34,7 +33,7 @@ mysql:
   MysqlDB: api_chat_db
 
 logger:
-  Development: true
+  Development: false
   DisableCaller: false
   DisableStacktrace: false
   Encoding: json

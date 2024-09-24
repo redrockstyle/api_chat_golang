@@ -5,3 +5,5 @@
 *.txt
 *.png
 *.exe
+*.pyc
+/front

@@ -19,16 +19,13 @@ func NewApiRouter(cfg *cfg.Configuration, h *httphandler.HttpApiHandler) *ApiRou
 }
 
 func (ap *ApiRouter) InitRouter(rootPath string) {
-	if ap.cfg.Server.Mode == "Development" {
-		ap.r.GET(rootPath+"/test", ap.h.HandlerTest)
-	}
+	// ap.r.GET(rootPath+"/test", ap.h.HandlerTest)
+
+	ap.r.HEAD(rootPath+"/{catch:*}", ap.h.HandlerOptHead)
+	ap.r.OPTIONS(rootPath+"/{catch:*}", ap.h.HandlerOptHead)
 
 	// auth
-	ap.r.POST(rootPath+"/login", ap.h.HandlerLogin) // login
-	if ap.cfg.Server.Registration {
-		ap.r.POST(rootPath+"/register", ap.h.HanlderRegister) // register
-	}
-	ap.r.POST(rootPath+"/refresh", ap.h.HanlderRefresh) // refresh token
+	ap.r.POST(rootPath+"/{auth}", ap.h.HandlerAuth) // login, register, refresh token, logout
 
 	// user
 	ap.r.GET(rootPath+"/user/{login}", ap.h.HandlerUser)          // info self and info current user

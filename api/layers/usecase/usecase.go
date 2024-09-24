@@ -15,7 +15,6 @@ import (
 
 type UsecaseOperator struct {
 	cfg    *cfg.Configuration
-	auth   *mwauth.AuthCtx
 	role   *mwrole.RoleCtx
 	log    logx.Logger
 	ucuser *ucuser.UsecaseUser
@@ -30,10 +29,9 @@ func NewUsecaseOparetor(cfg *cfg.Configuration, reposCtx *repos.ReposContext, lo
 		cfg:    cfg,
 		repos:  reposCtx,
 		log:    logx,
-		ucuser: ucuser.NewUsecaseUser(reposCtx, role, logx),
+		ucuser: ucuser.NewUsecaseUser(reposCtx, role, mwauth.NewAuthCtx(cfg, reposCtx, logx), logx),
 		ucchat: ucchat.NewUsecaseChat(reposCtx, role, logx),
 		ucmsg:  ucmsg.NewUsecaseMessage(reposCtx, role, logx),
-		auth:   mwauth.NewAuthCtx(cfg, reposCtx, logx),
 		role:   role,
 	}
 }
@@ -52,18 +50,6 @@ func (uc *UsecaseOperator) Message() *ucmsg.UsecaseMessage {
 
 func (uc *UsecaseOperator) Role() *mwrole.RoleCtx {
 	return uc.role
-}
-
-func (uc *UsecaseOperator) Register(user *db.User) error {
-	return uc.auth.Register(user)
-}
-
-func (uc *UsecaseOperator) Login(user *db.User) (string, error) {
-	return uc.auth.Authentificate(user)
-}
-
-func (uc *UsecaseOperator) Refresh(session string) (string, error) {
-	return uc.auth.Refresh(session)
 }
 
 // func (uc *UsecaseOperator) DestroySession(session string) error {

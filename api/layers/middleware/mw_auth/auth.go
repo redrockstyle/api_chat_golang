@@ -80,6 +80,11 @@ func (ac *AuthCtx) Refresh(session string) (string, error) {
 	return newSession, nil
 }
 
+func (ac *AuthCtx) Logout(session string) error {
+	ac.logx.Debug("Logout called")
+	return ac.repos.Session().SessionDestroy(session)
+}
+
 func (ac *AuthCtx) IsIgnoreUsernames(login string) error {
 	err := errors.New("login is protected")
 	switch login {

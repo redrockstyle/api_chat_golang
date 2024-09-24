@@ -1,8 +1,6 @@
 server:
   AppVersion: 1.0.0
   Port: :5000
-  Domain: localhost
-  Mode: Development
   ServerName: api_v1
   PrefixPath: /api/v1
   Registration: true
@@ -10,6 +8,7 @@ server:
 
 ssl:
   Active: true
+  # Domain: localhost
   CrtPath: certs/localhost.crt
   KeyPath: certs/localhost.key
 
@@ -17,7 +16,7 @@ database:
   Driver: psql
   # Driver: mysql
   CleanStart: false
-  CreateAdmin: false
+  CreateAdmin: true
 
 postgres:
   PostgresqlHost: 192.168.48.128
@@ -38,7 +37,7 @@ logger:
   DisableCaller: false
   DisableStacktrace: false
   Encoding: json
-  Level: info
+  Level: debug
 
 admin:
   username: admin

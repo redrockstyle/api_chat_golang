@@ -3,6 +3,7 @@ package ucuser
 import (
 	"api_chat/api/layers/base/logx"
 	"api_chat/api/layers/domain/db"
+	mwauth "api_chat/api/layers/middleware/mw_auth"
 	mwrole "api_chat/api/layers/middleware/mw_role"
 	"api_chat/api/layers/repos"
 	"errors"
@@ -11,11 +12,40 @@ import (
 type UsecaseUser struct {
 	rep  *repos.ReposContext
 	role *mwrole.RoleCtx
+	auth *mwauth.AuthCtx
 	log  logx.Logger
 }
 
-func NewUsecaseUser(rep *repos.ReposContext, role *mwrole.RoleCtx, logx logx.Logger) *UsecaseUser {
-	return &UsecaseUser{rep: rep, role: role, log: logx}
+func NewUsecaseUser(rep *repos.ReposContext, role *mwrole.RoleCtx, auth *mwauth.AuthCtx, logx logx.Logger) *UsecaseUser {
+	return &UsecaseUser{rep: rep, role: role, auth: auth, log: logx}
+}
+
+func (ucu *UsecaseUser) Register(user *db.User) error {
+	return ucu.auth.Register(user)
+}
+
+func (ucu *UsecaseUser) Login(user *db.User) (string, error) {
+	return ucu.auth.Authentificate(user)
+}
+
+func (ucu *UsecaseUser) Refresh(session string) (string, error) {
+	return ucu.auth.Refresh(session)
+}
+
+func (ucu *UsecaseUser) Logout(session string) error {
+	return ucu.auth.Logout(session)
+}
+
+func (ucu *UsecaseUser) CreateUserByAdmin(session string, user *db.User) error {
+	userId, err := ucu.rep.Session().SessionGetUserId(session)
+	if err != nil {
+		return err
+	}
+	if !ucu.role.IsAdminRoleById(userId) {
+		return errors.New("operation is not permitted")
+	}
+
+	return ucu.auth.Register(user)
 }
 
 func (ucu *UsecaseUser) ChangeInfoSelf(session string, user *db.User) error {

@@ -32,10 +32,9 @@ func (has *HttpApiServer) Runtime() {
 	has.apr.InitRouter(has.cfg.Server.PrefixPath)
 	if has.cfg.SSL.Active {
 		has.logx.Info("SSL enable")
-		if has.cfg.Server.Mode == "Development" {
+		if has.cfg.SSL.Domain == "" || has.cfg.SSL.Domain == "localhost" {
 			go func() {
 				has.logx.Infof("Mode development is active: use %v and %v", has.cfg.SSL.CrtPath, has.cfg.SSL.KeyPath)
-				//if err := fasthttp.ListenAndServeTLS(has.cfg.Server.Port, has.cfg.SSL.CrtPath, has.cfg.SSL.KeyPath, has.handler.RequestHadler); err != nil {
 				if err := fasthttp.ListenAndServeTLS(has.cfg.Server.Port, has.cfg.SSL.CrtPath, has.cfg.SSL.KeyPath, has.apr.GetHander()); err != nil {
 					has.logx.Warnf("Server returned err: %v", err)
 					return
@@ -53,7 +52,6 @@ func (has *HttpApiServer) Runtime() {
 				return
 			}
 			lnTls = tls.NewListener(ln, cfg)
-			// if err := fasthttp.Serve(lnTls, has.handler.RequestHadler); err != nil {
 			if err := fasthttp.Serve(lnTls, has.apr.GetHander()); err != nil {
 				has.logx.Warnf("Server returned err: %v", err)
 				return

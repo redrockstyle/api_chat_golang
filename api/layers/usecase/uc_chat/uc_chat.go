@@ -18,7 +18,7 @@ func NewUsecaseChat(rep *repos.ReposContext, role *mwrole.RoleCtx, logx logx.Log
 	return &UsecaseChat{rep: rep, role: role, log: logx}
 }
 
-func (ucu *UsecaseChat) CreateChatAdmin(session string, chat *db.Chat) error {
+func (ucu *UsecaseChat) CreateChatByAdmin(session string, chat *db.Chat) error {
 	userId, err := ucu.rep.Session().SessionGetUserId(session)
 	if err != nil {
 		return err

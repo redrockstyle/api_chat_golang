@@ -26,7 +26,6 @@ type ServerConfig struct {
 	AppVersion         string
 	Port               string
 	Domain             string
-	Mode               string
 	ServerName         string
 	PrefixPath         string
 	Registration       bool
@@ -35,6 +34,7 @@ type ServerConfig struct {
 
 type SslConfig struct {
 	Active  bool
+	Domain  string
 	CrtPath string
 	KeyPath string
 }

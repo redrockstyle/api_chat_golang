@@ -45,7 +45,7 @@ func (i *Initializer) InitConfig() {
 
 func (i *Initializer) Startup() {
 	i.log.Info("Initialization API")
-	i.log.Infof("VersionAPI:%v Mode:%v SSL:%v", i.cfg.Server.AppVersion, i.cfg.Server.Mode, i.cfg.SSL.Active)
+	i.log.Infof("VersionAPI:%v SSL:%v", i.cfg.Server.AppVersion, i.cfg.SSL.Active)
 	i.log.Infof("LoggerLevel:%v", i.cfg.Logger.Level)
 
 	i.log.Info("Open database")
