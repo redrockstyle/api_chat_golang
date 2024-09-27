@@ -24,6 +24,9 @@ services:
       - POSTGRES_DB=api_chat_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: always
+    # ports:
+    #   - "5432:5432"
     networks:
       - web_api
 

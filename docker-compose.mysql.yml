@@ -25,6 +25,7 @@ services:
       - MYSQL_DATABASE=api_chat_db
     volumes:
       - mysqldata:/var/lib/mysql
+    restart: always
     networks:
       - web_api
 
