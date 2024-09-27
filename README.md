@@ -43,3 +43,10 @@ Build Frontend
 ```bash
 docker build -t front_chat:v1.0.0 ./front_example/.
 ```
+## Generate certificate
+```bash
+git clone https://github.com/redrockstyle/api_chat_golang.git
+cd api_chat_golang/certs
+chmod +x gen_localhost.sh
+./gen_localhost.sh
+```
