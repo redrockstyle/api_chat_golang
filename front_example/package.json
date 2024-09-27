@@ -15,7 +15,7 @@
 		"cors": "^2.8.5",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.2.1",
-		"got": "^9.6.0",
+		"got": "^11.8.6",
 		"image-size": "^1.0.0",
 		"is-jpg": "^2.0.0",
 		"jsonwebtoken": "^9.0.2",
