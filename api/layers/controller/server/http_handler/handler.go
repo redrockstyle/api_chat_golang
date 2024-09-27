@@ -12,17 +12,27 @@ import (
 )
 
 const (
-	TargetSelf       = "self"
-	strHeaderSession = "X-Allow-Session"
+	TargetSelf     = "self"
+	strHeaderToken = "X-Allow-Session"
 
 	//strContentType     = "Content-Type"
 	strApplicationJSON = "application/json; charset=UTF-8"
 )
 
+type ReToken struct {
+	Token string `json:"token"`
+}
+
 type ReMessage struct {
 	Chat    string `json:"chat"`
 	Text    string `json:"text"`
 	Message uint64 `json:"msg_id"`
+}
+
+type RePass struct {
+	Login   string `json:"login"`
+	OldPass string `json:"old_pass"`
+	NewPass string `json:"new_pass"`
 }
 
 type HttpApiHandler struct {
@@ -50,7 +60,7 @@ func (has *HttpApiHandler) HandlerOptHead(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
+	SetAllowOriginSelfCaller(ctx)
 	active := ctx.UserValue("auth").(string)
 	method := string(ctx.Method())
 	switch method {
@@ -68,7 +78,7 @@ func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Login user:%v err:%v", user.Login, err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
-							ctx.Response.Header.Set(strHeaderSession, session)
+							SetTokenValue(ctx, session)
 							ctx.SetStatusCode(fasthttp.StatusOK)
 						}
 					}
@@ -94,7 +104,7 @@ func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 				}
 			case "refresh":
 				{
-					session := ctx.Request.Header.Peek(strHeaderSession)
+					session := GetTokenValue(ctx)
 					if len(session) == 0 {
 						ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 					} else {
@@ -103,13 +113,13 @@ func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Refresh: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusForbidden)
 						} else {
-							ctx.Response.Header.Set(strHeaderSession, newSession)
+							SetTokenValue(ctx, newSession)
 						}
 					}
 				}
 			case "logout":
 				{
-					session := ctx.Request.Header.Peek(strHeaderSession)
+					session := GetTokenValue(ctx)
 					if len(session) == 0 {
 						ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 					} else {
@@ -117,7 +127,7 @@ func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Logout: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 						} else {
-							ctx.Response.Header.Del(strHeaderSession)
+							SetTokenValue(ctx, session)
 							ctx.SetStatusCode(fasthttp.StatusOK)
 						}
 					}
@@ -133,8 +143,8 @@ func (has *HttpApiHandler) HandlerAuth(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
 	target := ctx.UserValue("login").(string)
 	if len(session) == 0 {
 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
@@ -210,10 +220,41 @@ func (has *HttpApiHandler) HandlerUser(ctx *fasthttp.RequestCtx) {
 	}
 }
 
+func (has *HttpApiHandler) HandlerChangePassword(ctx *fasthttp.RequestCtx) {
+	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
+	if len(session) == 0 {
+		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
+	} else {
+		method := string(ctx.Method())
+		switch method {
+		case fasthttp.MethodPatch:
+			{
+				body := RePass{}
+				if err := json.Unmarshal(ctx.Request.Body(), &body); err != nil {
+					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+				} else {
+					if err := has.uc.User().ChangePasswordSelf(session, body.OldPass, body.NewPass); err != nil {
+						has.logx.Warnf("Change password: %v", err)
+						ctx.SetStatusCode(fasthttp.StatusBadRequest)
+					} else {
+						ctx.SetStatusCode(fasthttp.StatusOK)
+					}
+				}
+			}
+		default:
+			{
+				ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+			}
+		}
+	}
+}
+
 func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
 	target := ctx.UserValue("desc").(string)
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
 	limitStr := string(ctx.QueryArgs().Peek("limit"))
@@ -276,8 +317,8 @@ func (has *HttpApiHandler) HandlerChat(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerFollow(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
 	target := ctx.UserValue("desc").(string)
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
 	limitStr := string(ctx.QueryArgs().Peek("limit"))
@@ -325,8 +366,9 @@ func (has *HttpApiHandler) HandlerFollow(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
+	target := ctx.UserValue("desc").(string)
 	if len(session) == 0 {
 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 	} else {
@@ -334,7 +376,6 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 		switch method {
 		case fasthttp.MethodGet:
 			{
-				target := ctx.UserValue("chat").(string)
 				offsetStr := string(ctx.QueryArgs().Peek("offset"))
 				limitStr := string(ctx.QueryArgs().Peek("limit"))
 				offset, _ := strconv.Atoi(offsetStr)
@@ -353,7 +394,7 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 				if err := json.Unmarshal(ctx.Request.Body(), &reqBody); err != nil {
 					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					if err := has.uc.Message().PushMessageToChat(session, reqBody.Chat, reqBody.Text); err != nil {
+					if err := has.uc.Message().PushMessageToChat(session, target, reqBody.Text); err != nil {
 						has.logx.Warnf("Push message: %v", err)
 						ctx.SetStatusCode(fasthttp.StatusBadRequest)
 					} else {
@@ -363,11 +404,12 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 			}
 		case fasthttp.MethodDelete:
 			{
-				reqBody := ReMessage{}
-				if err := json.Unmarshal(ctx.Request.Body(), &reqBody); err != nil {
+				idStr := ctx.UserValue("id").(string)
+				id, err := strconv.ParseUint(idStr, 10, 64)
+				if err != nil {
 					ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				} else {
-					if err := has.uc.Message().DelMessageFromChat(session, reqBody.Chat, reqBody.Message); err != nil {
+					if err := has.uc.Message().DelMessageFromChat(session, target, id); err != nil {
 						has.logx.Warnf("Delete message: %v", err)
 						ctx.SetStatusCode(fasthttp.StatusBadRequest)
 					} else {
@@ -385,9 +427,8 @@ func (has *HttpApiHandler) HandlerMessage(ctx *fasthttp.RequestCtx) {
 
 func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
-	target := ctx.UserValue("entity").(string)
+	SetAllowOriginSelfCaller(ctx)
+	session := GetTokenValue(ctx)
 	role := string(ctx.QueryArgs().Peek("do"))
 	offsetStr := string(ctx.QueryArgs().Peek("offset"))
 	limitStr := string(ctx.QueryArgs().Peek("limit"))
@@ -398,26 +439,27 @@ func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 		switch method {
 		case fasthttp.MethodGet:
 			{
+				target := ctx.UserValue("entity").(string)
 				switch target {
-				case "users":
+				case "user":
 					{
 						offset, _ := strconv.Atoi(offsetStr)
 						limit, _ := strconv.Atoi(limitStr)
 						users, err := has.uc.Role().GetAllUsers(session, offset, limit)
 						if err != nil {
-							has.logx.Warnf("Delete message: %v", err)
+							has.logx.Warnf("GetAllUsers message: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
 							SetBodyJson(ctx, &users)
 						}
 					}
-				case "chats":
+				case "chat":
 					{
 						offset, _ := strconv.Atoi(offsetStr)
 						limit, _ := strconv.Atoi(limitStr)
 						chats, err := has.uc.Role().GetAllChats(session, offset, limit)
 						if err != nil {
-							has.logx.Warnf("Delete message: %v", err)
+							has.logx.Warnf("GetAllChats message: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
 							SetBodyJson(ctx, &chats)
@@ -427,35 +469,9 @@ func (has *HttpApiHandler) HandlerAdmin(ctx *fasthttp.RequestCtx) {
 					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
-		case fasthttp.MethodPatch:
-			{
-				if err := has.uc.Role().SetRoleUser(session, target, role); err != nil {
-					has.logx.Warnf("Set role: %v", err)
-					ctx.SetStatusCode(fasthttp.StatusBadRequest)
-				} else {
-					ctx.SetStatusCode(fasthttp.StatusOK)
-				}
-			}
-		default:
-			{
-				ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
-			}
-		}
-	}
-}
-
-func (has *HttpApiHandler) HandlerAdminCreate(ctx *fasthttp.RequestCtx) {
-	SetServerNameHeader(ctx, has.cfg.Server.ServerName)
-	SetCORSAllow(ctx)
-	session := string(ctx.Request.Header.Peek(strHeaderSession))
-	target := ctx.UserValue("entity").(string)
-	if len(session) == 0 {
-		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
-	} else {
-		method := string(ctx.Method())
-		switch method {
 		case fasthttp.MethodPost:
 			{
+				target := ctx.UserValue("entity").(string)
 				switch target {
 				case "user":
 					{
@@ -468,7 +484,8 @@ func (has *HttpApiHandler) HandlerAdminCreate(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Create chat: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
-							ctx.SetStatusCode(fasthttp.StatusOK)
+							SetLocationHeader(ctx, has.cfg.Server.PrefixPath+"/user/"+user.Login)
+							ctx.SetStatusCode(fasthttp.StatusCreated)
 						}
 					}
 				case "chat":
@@ -482,15 +499,38 @@ func (has *HttpApiHandler) HandlerAdminCreate(ctx *fasthttp.RequestCtx) {
 							has.logx.Warnf("Create chat: %v", err)
 							ctx.SetStatusCode(fasthttp.StatusBadRequest)
 						} else {
-							ctx.SetStatusCode(fasthttp.StatusOK)
+							SetLocationHeader(ctx, has.cfg.Server.PrefixPath+"/chat/"+chat.Desc)
+							ctx.SetStatusCode(fasthttp.StatusCreated)
 						}
 					}
 				default:
 					ctx.SetStatusCode(fasthttp.StatusTeapot)
 				}
 			}
+		case fasthttp.MethodPatch:
+			{
+				target := ctx.UserValue("login").(string)
+				if err := has.uc.Role().SetRoleUser(session, target, role); err != nil {
+					has.logx.Warnf("Set role: %v", err)
+					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+				} else {
+					ctx.SetStatusCode(fasthttp.StatusOK)
+				}
+			}
+		case fasthttp.MethodDelete:
+			{
+				target := ctx.UserValue("login").(string)
+				if err := has.uc.Role().DeleteUser(session, target); err != nil {
+					has.logx.Warnf("Del role: %v", err)
+					ctx.SetStatusCode(fasthttp.StatusBadRequest)
+				} else {
+					ctx.SetStatusCode(fasthttp.StatusNoContent)
+				}
+			}
 		default:
-			ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+			{
+				ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+			}
 		}
 	}
 }
@@ -514,17 +554,30 @@ func SetChacheControlDisable(ctx *fasthttp.RequestCtx) {
 }
 
 func SetLocationHeader(ctx *fasthttp.RequestCtx, url string) {
-	ctx.Request.Header.Set(fasthttp.HeaderLocation, url)
+	ctx.Response.Header.Set(fasthttp.HeaderLocation, url)
+}
+
+func SetAllowOriginSelfCaller(ctx *fasthttp.RequestCtx) {
+	host := ctx.Request.Header.Peek("Origin")
+	if len(host) == 0 {
+		ctx.Response.Header.Set(fasthttp.HeaderAccessControlAllowOrigin, "*")
+	} else {
+		ctx.Response.Header.SetBytesV(fasthttp.HeaderAccessControlAllowOrigin, ctx.Request.Header.Peek(fasthttp.HeaderOrigin))
+	}
 }
 
 func SetCORSAllow(ctx *fasthttp.RequestCtx) {
-	host := ctx.Request.Header.Peek("Origin")
-	if len(host) == 0 {
-		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
-	} else {
-		ctx.Response.Header.SetBytesV("Access-Control-Allow-Origin", ctx.Request.Header.Peek("Origin"))
-	}
-	ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-	ctx.Response.Header.Set("Access-Control-Allow-Headers", "X-Allow-Session, Content-Type")
-	ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
+	SetAllowOriginSelfCaller(ctx)
+	ctx.Response.Header.Set(fasthttp.HeaderAccessControlAllowMethods, "GET, POST, PATCH, DELETE, OPTIONS")
+	ctx.Response.Header.Set(fasthttp.HeaderAccessControlAllowHeaders, "X-Allow-Session, Content-Type")
+	ctx.Response.Header.Set(fasthttp.HeaderAccessControlAllowCredentials, "true")
+	ctx.Response.Header.Set(fasthttp.HeaderAccessControlMaxAge, "86400")
+}
+
+func GetTokenValue(ctx *fasthttp.RequestCtx) string {
+	return string(ctx.Request.Header.Peek(strHeaderToken))
+}
+
+func SetTokenValue(ctx *fasthttp.RequestCtx, value string) {
+	ctx.Response.Header.Set(strHeaderToken, value)
 }

@@ -3,7 +3,7 @@
 *.pem
 *.csr
 *.txt
-*.png
+*b.png
 *.exe
 *.pyc
-/front
+*node_modules*

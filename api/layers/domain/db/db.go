@@ -8,6 +8,7 @@ const (
 
 type User struct {
 	Id        string `json:"-" gorm:"size:36"` // sizeof(UUID) == 36 bytes
+	Avatar    string `json:"avatar" gorm:"size:255"`
 	FirstName string `json:"first_name" gorm:"size:255"`
 	LastName  string `json:"last_name" gorm:"size:255"`
 	Login     string `json:"login" validate:"required" gorm:"size:36;unique"`

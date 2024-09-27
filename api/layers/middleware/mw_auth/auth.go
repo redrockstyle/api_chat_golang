@@ -29,6 +29,7 @@ func (ac *AuthCtx) Register(user *db.User) error {
 		return err
 	}
 	_, err := ac.repos.User().Create(user)
+	ac.logx.Infof("User %s registered", user.Login)
 	return err
 }
 
@@ -54,7 +55,13 @@ func (ac *AuthCtx) Authentificate(user *db.User) (string, error) {
 		return "", err
 	}
 
-	return ac.repos.Session().SessionCreate(getUser.Id)
+	session, err := ac.repos.Session().SessionCreate(getUser.Id)
+	if err != nil {
+		return "", err
+	}
+
+	ac.logx.Infof("User %s logged in with session:%s", user.Login, session)
+	return session, nil
 }
 
 // func (ac *AuthCtx) CheckSession(session string) bool {
@@ -77,6 +84,7 @@ func (ac *AuthCtx) Refresh(session string) (string, error) {
 		return "", err
 	}
 
+	ac.logx.Infof("Refresh session old:%s new:%s", session, newSession)
 	return newSession, nil
 }
 

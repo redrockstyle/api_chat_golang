@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>LuckyChat - Profile</title>
+        <link rel="icon" href="/static/images/favicon.png" />
+        <link rel="stylesheet" type="text/css" href="/static/css/nes-core.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    </head>
+    <body>
+        <div class="parent-container">
+            <div class="sidebar">
+                <img class="main-logo" src="/static/images/default-icon.jpg" />
+                <p class="title-p">LuckyChat<br /></p>
+                <ul class="nav-bar">
+                    <li><a href="/chats" class="nes-btn is-primary nav-li">Chats</a></li>
+                    <li><a href="#" class="nes-btn is-primary nav-li">Profile</a></li>
+                    <li><a href="/create" class="nes-btn is-primary nav-li">Create chat</a></li>
+                    <li><a href="/follow" class="nes-btn is-primary nav-li">Follow chat</a></li>
+                    <li><a href="/logout" class="nes-btn is-primary nav-li">Logout</a></li>
+                </ul>
+            </div>
+            <div class="main-area">
+                <div class="nes-container is-centered profile-area">
+                    <p class="title" id="username">{{ user.login }}</p>
+                    <img class="nes-avatar is-rounded profile-avatar" src="/static/images/default-avatar.jpg" /><br />
+                </div>
+                <div class="nes-container history-feed">
+                    <p class="title">Кастомизацию аватара не завезли</p>
+                    <p>Так что расходимся, джентельмены...</p>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="/static/js/jquery-3.6.0.slim.min.js"></script>
+        <script type="text/javascript" src="/static/js/profile.js"></script>
+    </body>
+</html>

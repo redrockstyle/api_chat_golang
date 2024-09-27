@@ -1,0 +1,53 @@
+services:
+  backend:
+    container_name: api_chat
+    hostname: api_chat
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5000:5000"
+    environment:
+      - PORT=5000
+    depends_on:
+      - postgesql
+    restart: always
+    networks:
+      - web_api
+
+  frontend:
+    container_name: front_chat
+    build:
+      context: ./front_example
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+    - PORT=8080
+    - HOST_API=api_chat
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - web_api
+  
+  postgesql:
+    image: postgres:15-alpine
+    container_name: psql_api_chat
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=api_chat_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - web_api
+
+networks:
+  web_api:
+    driver: bridge
+  
+volumes:
+  pgdata:
+    external: false

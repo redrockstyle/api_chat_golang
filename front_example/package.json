@@ -1,0 +1,33 @@
+{
+	"name": "lucky_chat",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"keywords": [],
+	"author": "redrockstyle",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.19.0",
+		"cookie-parser": "^1.4.4",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"express-fileupload": "^1.2.1",
+		"got": "^9.6.0",
+		"image-size": "^1.0.0",
+		"is-jpg": "^2.0.0",
+		"jsonwebtoken": "^9.0.2",
+		"node-fetch": "^3.3.2",
+		"nunjucks": "^3.2.0",
+		"pino": "^9.4.0",
+		"pino-pretty": "^11.2.2",
+		"puppeteer": "^8.0.0",
+		"read-chunk": "^3.2.0",
+		"request-promise": "^0.0.1"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.7"
+	}
+}

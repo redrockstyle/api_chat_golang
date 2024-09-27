@@ -91,6 +91,11 @@ func (ucm *UsecaseMessage) DelMessageFromChat(session string, chatDesc string, m
 		return err
 	}
 
+	msg, err := ucm.rep.GetMessageFromChat(chat.Id, msgId)
+	if err != nil {
+		return err
+	}
+
 	if !ucm.role.IsAdminRoleById(userId) {
 		if !ucm.role.IsPermDeleteByUserId(userId) {
 			return errors.New("operation is not permitted")
@@ -98,10 +103,9 @@ func (ucm *UsecaseMessage) DelMessageFromChat(session string, chatDesc string, m
 		if !ucm.rep.IsExistsUserInChat(userId, chat.Id) {
 			return errors.New("this user is not follower")
 		}
-	}
-
-	if _, err := ucm.rep.GetMessageFromChat(chat.Id, msgId); err != nil {
-		return err
+		if msg.IdUser != userId {
+			return errors.New("this user is not author of this message")
+		}
 	}
 
 	ucm.log.Infof("delete message id:%v from chat:%v", msgId, chatDesc)

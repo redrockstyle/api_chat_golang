@@ -101,6 +101,22 @@ func (rc *RoleCtx) SetRoleUser(session string, login string, role string) error 
 	return nil
 }
 
+func (rc *RoleCtx) DeleteUser(session string, login string) error {
+	userId, err := rc.rep.Session().SessionGetUserId(session)
+	if err != nil {
+		return err
+	}
+	if !rc.IsAdminRoleById(userId) {
+		return errors.New("operation is not permitted")
+	}
+	userTarget := db.User{}
+	if _, err := rc.rep.User().Get(&userTarget, map[string]interface{}{"login": login}, 0, 0); err != nil {
+		return err
+	}
+	_, err = rc.rep.User().Delete(userTarget.Id)
+	return err
+}
+
 func (rc *RoleCtx) IsAdminRoleById(userId string) bool {
 	user := db.User{Id: userId}
 	if _, err := rc.rep.User().Get(&user, nil, 0, 0); err != nil {

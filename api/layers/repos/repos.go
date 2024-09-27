@@ -132,7 +132,8 @@ func (mc *ReposContext) GetCountMessages(chatId uint64, conds map[string]interfa
 func (mc *ReposContext) GetMessagesFromChat(chatId uint64, offset int, limit int) (*[]db.Message, error) {
 	tableName, err := mc.dbc.TypeTableIsExists(chatId, &db.Message{})
 	if err != nil {
-		return nil, err
+		return &[]db.Message{}, nil
+		// return nil, err
 	}
 	msgs := []db.Message{}
 	if _, err := mc.dbc.TypeGets(tableName, &msgs, nil, offset, limit); err != nil {
